@@ -1,9 +1,15 @@
 # R function to import to NHANES and format it
 
-get_nhanes <- function(years="2011", sections=NULL, files=NULL) {
-
-  # load file with lists of available datasets
-  load("nhanes_files.rda")
+get_nhanes <- function(years="2011", sections="demog", files=NULL) {
+  
+  # fix setInternet so files will download
+  setInternet2(use=FALSE)
+  
+  # load file to switch year input to create URLs
+  years_switch <- read.csv("inst/extdata/years.switch.csv")
+  
+  # load file with lists of available data sets
+  nhanes_files_nosubsets <- read.csv("inst/extdata/cdc_nhanes_files2.csv")
   
   ### DAMICO
   # set the number of digits shown in all output
@@ -22,45 +28,8 @@ get_nhanes <- function(years="2011", sections=NULL, files=NULL) {
   # this setting matches the MISSUNIT option in SUDAAN
   ## / DAMICO
   
-  # loop through year and create demographics URLS
-  # also need to change the letter after demo_ based on the year
-  # for now, can just specify one year and create URL
-  
-  # loop through years and create year.str vector
-  year.str <- NULL
-  for (i in 1:length(years)) {
-  year.str[i] <- switch(years[i],
-                     "2011" = "2011-2012",
-                     "2009" = "2009-2010",
-                     "2007" = "2007-2008",
-                     "2005" = "2005-2006",
-                     "2003" = "2003-2004",
-                     "2001" = "2001-2002",
-                     "1999" = "1999-2000"
-                     )
-  }
-  
-  # create correct ending for variables based on year
-  var_end <- NULL
-  for (i in 1:length(years)) {
-    var_end[i] <- switch(years[i],
-                          "2011" = "_g.xpt",
-                          "2009" = "_f.xpt",
-                          "2007" = "_e.xpt",
-                          "2005" = "_d.xpt",
-                          "2003" = "_c.xpt",
-                          "2001" = "_b.xpt",
-                          "1999" = ".xpt"
-    )
-  }
-  
-  # URL for demographic file
-  NHANES.demog.file.loc <- NULL
-  
-  for (i in 1:length(years)) {
-  NHANES.demog.file.loc[i] <- 
-    paste0("ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/nhanes/", year.str[i], "/demo", var_end[i])
-  }
+  # make reference table with selected years
+  selected_years <- years_switch[years_switch$years %in% years, ]
   
   # URLs for other file locations
   
@@ -72,55 +41,75 @@ get_nhanes <- function(years="2011", sections=NULL, files=NULL) {
   filenames <- matrix(data = NA, nrow=length(selected_files), ncol=length(years))
   for (i in 1:length(years)) {
     for (j in 1:length(selected_files)) {
-      URLs[j, i] <- paste0("ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/nhanes/", year.str[i], "/", selected_files[j], var_end[i])
+      URLs[j, i] <- paste0("ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/nhanes/", selected_years$year.str[i], "/", selected_files[j], selected_years$var_end[i])
       filenames[j, i] <- paste0("NHANES.", years[i], ".", selected_files[j], ".df")
     }
   }
   
-  # DAMICO
-  # download and importation function
-  download.and.import.any.nhanes.file <-  	# this line gives the function a name
-    function( ftp.filepath ){ 		# this line specifies the input values for the function
-      
-      
-      # create a temporary file
-      # for downloading file to the local drive
-      tf <- tempfile()
-      
-      
-      # download the file using the ftp.filepath specified
-      download.file( 
-        # download the file stored in the location designated above
-        ftp.filepath ,
-        # save the file as the temporary file assigned above
-        tf , 
-        # download this as a binary file type
-        mode = "wb"
-      )
-      
-      # the variable 'tf' now contains the full file path on the local computer to the specified file
-      
-      read.xport( tf )			# the last line of a function contains what it *returns*
-      # so by putting read.xport as the final line,
-      # this function will return an r data frame
-    }
-  # /DAMICO 
-  
-  # download all files
-  
-  # download demographic file
-  name <- NULL
-  for (i in 1:length(NHANES.demog.file.loc)) {
-    name[i] <- paste0("NHANES.", years[i], ".demog.df")
-    assign(name[i], download.and.import.any.nhanes.file( NHANES.demog.file.loc[i] ))
-  } 
+ 
+# function to download NHANES files into folders by year
+download.nhanes.file <- function(URL, filename, year) {
 
-  # download all other files
-  URLs <- as.vector(URLs)
-  filenames <- as.vector(filenames)
+  # create file name
+  xptfile <- paste0(year, "/", filename, ".xpt")
   
-  for (i in 1:length(URLs)) {
-    assign(filenames[i], download.and.import.any.nhanes.file(URLs[i]))
+  # create year folder if it doesn't exist
+  if(!file.exists(year)) {dir.create(year)}
+  
+  # download the file using the URL specified
+  download.file( 
+    # download the file stored in the location designated above
+    URL ,
+    # save the file as the file assigned above
+    xptfile , 
+    # download this as a binary file type
+    mode = "wb"
+  ) 
+}
+
+# run function for all years specified
+for (i in 1:length(years)) {
+  for (j in 1:nrow(URLs)) {
+    download.nhanes.file(URL=URLs[j,i], filename=filenames[j, i], year=years[i])
   }
+}
+
+
+# function to combine files by year (merge on ID number)
+# each year's merged file is saved as .rda to the working directory
+combine.nhanes.files <- function(year) {
+
+  available.files <- list.files(year)
+  
+  for (i in 2:length(available.files)) {
+    if (!exists("merged1")) {merged1 <- read.xport(paste0(year, "/", available.files[i-1]))}
+    temp <- read.xport(paste0(year, "/", available.files[i]))
+    merged1 <- merge(merged1, temp, all=F)
+  }
+
+  # return merged file for specified year
+  save(merged1, file=paste0("merged", year, ".rda" ))
+}
+
+# run function for all years specified
+for (i in length(years)) {
+  combine.nhanes.files(years[i])
+}  
+
+# TO DO:
+# merge all years of data
+# compute multiyear weights
+# create and return survey object
+
+  nhanes.tsl.design <- 
+    svydesign(
+      id = ~SDMVPSU , 
+      strata = ~SDMVSTRA ,
+      nest = TRUE ,
+      weights = ~WTINT2YR ,
+      data = NHANES.2007.demog.df
+    )
+  
+  return(nhanes.tsl.design)
 
 }

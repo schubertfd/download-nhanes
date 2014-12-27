@@ -1,0 +1,85 @@
+section,description,filename
+demog,Demographic Variables and Sample Weights,DEMO
+dietary,Dietary Interview: Individual Foods -- First Day,DR1IFF
+dietary,Dietary Interview: Individual Foods -- Second Day,DR2IFF
+dietary,Dietary Interview: Total Nutrient Intakes -- First Day,DR1TOT
+dietary,Dietary Interview: Total Nutrient Intakes -- Second Day,DR2TOT
+dietary,Dietary Supplement Use 24-Hour: Individual Dietary Supplements -- First Day,DS1IDS
+dietary,Dietary Supplement Use 24-Hour: Individual Dietary Supplements -- Second Day,DS2IDS
+dietary,Dietary Supplement Use 24-Hour: Total Dietary Supplements -- First Day,DS1TOT
+dietary,Dietary Supplement Use 24-Hour: Total Dietary Supplements -- Second Day,DS2TOT
+exam,Blood Pressure,BPX
+exam,Body Measures,BMX
+exam,Exhaled Nitric Oxide,ENX
+exam,Oral Health - Dentition,OHXDEN
+exam,Oral Health - Periodontal,OHXPER
+exam,Oral Health - Recommendation of Care,OHXREF
+exam,Tuberculosis,TBX
+lab,"Blood Lead, Cadmium, Total Mercury, Selenium, and Manganese",PBCD
+lab,"Blood mercury: inorganic, ethyl and methyl",IHGEM
+lab,Complete Blood Count with 5-Part Differential in Whole Blood,CBC
+lab,Cytomegalovirus,CMV
+lab,Fasting Questionnaire,FASTQX
+lab,Glycohemoglobin,GHB
+lab,HDL-Cholesterol,HDL
+lab,Hepatitis A,HEPA
+lab,Hepatitis B surface antibody,HEPB
+lab,"Hepatitis B: core antibody, surface antigen, and Hepatitis D antibody",HEPBD
+lab,"Hepatitis C: confirmed antibody, Hepatitis C RNA (HCV-RNA), and Hepatitis C genotype",HEPC
+lab,Hepatitis E: IgG Antibody and IgM Antibody,HEPE
+lab,Herpes Simplex Virus Type-1 and Type-2,HSV
+lab,HIV Antibody Test,HIV
+lab,Human Papillomavirus (HPV) in Oral Rinse,ORHPV
+lab,RBC Folate,FOLATE
+lab,Serum Cotinine and Urinary Total NNAL,COTNAL
+lab,Serum Folate Forms,FOLFMS
+lab,Standard Biochemistry Profile,BIOPRO
+lab,Thyroid Profile (Subsample),THYROD
+lab,Tissue transglutaminase assay (IgA-TTG) and the IgA endomyseal antibody assay (IgA EMA),TGEMA
+lab,Total Cholesterol,TCHOL
+lab,Total Testosterone,TST
+lab,Tuberculosis Quantiferon_In_Gold,TB
+lab,Urinary Albumin and Urinary Creatinine,ALB
+lab,Urinary Chlamydia,CHLMDA
+lab,Urine Flow Rate,UCFLOW
+lab,Urine Osmolality,UCOSMO
+lab,Urine Pregnancy Test,UCPREG
+lab,Vitamin B12,VITB12
+questionnaire,Acculturation,ACQ
+questionnaire,Alcohol Use,ALQ
+questionnaire,Audiometry,AUQ
+questionnaire,Blood Pressure and Cholesterol,BPQ
+questionnaire,Cardiovascular Disease and Health,CDQ
+questionnaire,Creatine Kinase Questionnaire,CKQ
+questionnaire,Current Health Status,HSQ
+questionnaire,Depression Screener,DPQ
+questionnaire,Dermatology,DEQ
+questionnaire,Diabetes,DIQ
+questionnaire,Early Childhood,ECQ
+questionnaire,Health Insurance,HIQ
+questionnaire,Hepatitis C Follow Up Questionnaire,HCQ
+questionnaire,Hospital Utilization and Access to Care,HUQ
+questionnaire,Housing Characteristics,HOQ
+questionnaire,Immunization Questionnaire,IMQ
+questionnaire,Kidney Conditions - Urology,KIQ
+questionnaire,Medical Conditions,MCQ
+questionnaire,Occupation Questionnaire,OCQ
+questionnaire,Oral Health,OHQ
+questionnaire,Pesticide Use,PUQMEC
+questionnaire,Physical Activity,PAQ
+questionnaire,Physical Functioning,PFQ
+questionnaire,Prescription Medications,RXQ
+questionnaire,Prescription Medications - Drug Information,RXQ
+questionnaire,Preventive Aspirin Use,RXQASA
+questionnaire,Reproductive Health,RHQ
+questionnaire,Respiratory Health and Disease,RDQ
+questionnaire,Sexual Behavior,SXQ
+questionnaire,Sleep Disorders,SLQ
+questionnaire,Smoking - Cigarette Use,SMQ
+questionnaire,Smoking - Household Smokers,SMQFAM
+questionnaire,Smoking - Recent Tobacco Use,SMQRTU
+questionnaire,Taste and Smell Disorders,CSQ
+questionnaire,Tuberculosis,TBQ
+questionnaire,Weight History,WHQ
+questionnaire,Weight History 8-15 years,WHQMEC
+,,
