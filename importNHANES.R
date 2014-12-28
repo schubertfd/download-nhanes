@@ -83,33 +83,74 @@ combine.nhanes.files <- function(year) {
   
   for (i in 2:length(available.files)) {
     if (!exists("merged1")) {merged1 <- read.xport(paste0(year, "/", available.files[i-1]))}
-    temp <- read.xport(paste0(year, "/", available.files[i]))
-    merged1 <- merge(merged1, temp, all=F)
+    tempfile <- read.xport(paste0(year, "/", available.files[i]))
+    merged1 <- merge(merged1, tempfile, all=T)
   }
-
+  
   # return merged file for specified year
-  save(merged1, file=paste0("merged", year, ".rda" ))
+  save("merged1", file=paste0("merged", year, ".rda" ))
 }
 
 # run function for all years specified
-for (i in length(years)) {
+for (i in 1:length(years)) {
   combine.nhanes.files(years[i])
 }  
 
-# TO DO:
-# merge all years of data
+# function to merge all years of data
+multiyear.combine.nhanes <- function() {
+  merged.files <- list.files(pattern=".rda")
+  for (i in 2:length(merged.files)) {
+   
+    load(merged.files[i-1])
+    
+    if(!exists("multiyearNHANES")) {multiyearNHANES <- merged1}
+    load(merged.files[i])
+    common_cols <- intersect(colnames(multiyearNHANES), colnames(merged1))
+    
+    multiyearNHANES <- rbind(
+      subset(multiyearNHANES, select = common_cols),
+      subset(merged1, select = common_cols)
+    )
+  }
+    save("multiyearNHANES", file="multiyearNHANES.rda")
+}
+
+# run function for all merged data in folder
+multiyear.combine.nhanes()
+
 # compute multiyear weights
+load("multiyearNHANES.rda")
+
+# Reference: http://www.cdc.gov/nchs/tutorials/nhanes/SurveyDesign/Weighting/Task2.htm
+# Note: weighting 1999 NHANES is more complex, might remove that option from this function
+  
+  multiyearNHANES$WTMULTYR <- 1/length(years) * multiyearNHANES$WTMEC2YR
+
 # create and return survey object
 
-  nhanes.tsl.design <- 
+if (length(years) == 1) {
+  nhanes.tsl.design <<- 
     svydesign(
       id = ~SDMVPSU , 
       strata = ~SDMVSTRA ,
       nest = TRUE ,
       weights = ~WTINT2YR ,
-      data = NHANES.2007.demog.df
+      data = multiyearNHANES
     )
+}
+
+if (length(years) > 1) {
   
-  return(nhanes.tsl.design)
+  nhanes.tsl.design <<- 
+    svydesign(
+      id = ~SDMVPSU , 
+      strata = ~SDMVSTRA ,
+      nest = TRUE ,
+      weights = ~WTINT2YR ,
+      data = multiyearNHANES
+    )
+} 
+  
+  #return(nhanes.tsl.design)
 
 }
